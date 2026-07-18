@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(start \"\" \"c:\\\\Users\\\\swals\\\\Dropbox\\\\PC\\\\Documents\\\\Catalyst\\\\catalyst-map.html\")",
+      "Bash(npx vite *)",
+      "Bash(chromium-cli --help)",
+      "Bash(npx tsc *)",
+      "Bash(curl -s -o /dev/null -w \"index: %{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(curl -s http://localhost:3001/api/state)",
+      "Bash(start \"\" \"http://localhost:3001\")",
+      "Bash(npx --yes playwright --version)",
+      "Bash(npx --yes playwright install chromium)",
+      "Bash(curl -s -o /dev/null -w \"server check: %{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(npx --yes playwright screenshot --help)",
+      "Bash(npx --yes playwright screenshot --wait-for-timeout 800 --viewport-size \"1600,900\" http://localhost:3001 screenshot.png)",
+      "Bash(rm -f screenshot.png)",
+      "Bash(curl -s http://localhost:3001/)",
+      "Bash(curl -s -o /dev/null -w \"JS asset status: %{http_code}\\\\n\" http://localhost:3001/assets/index-vOIzx2Os.js)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(node debug.js)",
+      "Bash(node debug2.js)",
+      "Bash(rm -f screenshot_narrow.png)",
+      "Bash(npx --yes playwright screenshot --wait-for-timeout 800 --viewport-size \"1024,768\" http://localhost:3001 screenshot_narrow.png)",
+      "Bash(curl -s -o /dev/null -w \"server: %{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(npx --yes playwright screenshot --wait-for-timeout 800 --viewport-size \"1180,800\" http://localhost:3001 screenshot_narrow.png)",
+      "Bash(node verify5.js)",
+      "Bash(node verify5b.js)",
+      "Bash(node verify-reveal.js)",
+      "Bash(node verify-reduced-motion.js)",
+      "Bash(node verify-print.js)",
+      "Bash(rm -f \"C:\\\\Users\\\\swals\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-swals-Dropbox-PC-Documents-Catalyst\\\\e84a981c-225f-470f-b3dd-ef15ddd05020\\\\scratchpad\"/verify*.js \"C:\\\\Users\\\\swals\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-swals-Dropbox-PC-Documents-Catalyst\\\\e84a981c-225f-470f-b3dd-ef15ddd05020\\\\scratchpad\"/*.png \"C:\\\\Users\\\\swals\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-swals-Dropbox-PC-Documents-Catalyst\\\\e84a981c-225f-470f-b3dd-ef15ddd05020\\\\scratchpad\"/*.pdf)",
+      "Bash(node verify-reveal2.js)",
+      "Bash(rm -f \"C:\\\\Users\\\\swals\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-swals-Dropbox-PC-Documents-Catalyst\\\\e84a981c-225f-470f-b3dd-ef15ddd05020\\\\scratchpad\"/verify*.js \"C:\\\\Users\\\\swals\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-swals-Dropbox-PC-Documents-Catalyst\\\\e84a981c-225f-470f-b3dd-ef15ddd05020\\\\scratchpad\"/*.png)",
+      "Bash(node verify-final.js)",
+      "Bash(node verify-anim-state.js)",
+      "Bash(node verify-anim-mid.js)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\swals\\AppData\\Local\\Temp\\claude\\c--Users-swals-Dropbox-PC-Documents-Catalyst\\e84a981c-225f-470f-b3dd-ef15ddd05020\\scratchpad"
+    ]
+  }
+}

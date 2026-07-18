@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Catalyst</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #0A0908;
+  --li:     #A9803F;
+  --li2:    #D8B36A;
+  --gold:   #B8923E;
+  --bright: #EDE8DC;
+  --mid:    #9C9488;
+  --dim:    #5C564A;
+  --border: #2C2822;
+}
+
+html, body { height: 100%; background: var(--bg); overflow: hidden; }
+
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: #100E0B;
+  border-bottom: 1px solid #2A2620;
+  padding: 10px 28px;
+  display: flex; align-items: center; gap: 20px;
+}
+.h-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--bright); letter-spacing: 0.18em;
+}
+.h-title em { color: var(--li2); font-style: normal; }
+.h-div { width: 1px; height: 16px; background: #2C2822; }
+.h-stamp {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: 0.22em;
+  color: var(--mid); text-transform: uppercase;
+}
+.h-stamp.red { color: #A6453A; border: 1px solid #5C2A1E; padding: 2px 8px; }
+.h-right { margin-left: auto; }
+.close-hint {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; color: var(--dim);
+  letter-spacing: 0.15em; display: none;
+}
+.close-hint.visible { display: block; }
+
+.canvas {
+  position: fixed; inset: 41px 0 0 0;
+  overflow: auto;
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: 32px 24px 80px;
+  background: var(--bg);
+  background-image:
+    linear-gradient(rgba(169,128,63,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(169,128,63,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  scrollbar-width: thin;
+  scrollbar-color: #3A3226 #100E0B;
+}
+.canvas::-webkit-scrollbar { width: 12px; height: 12px; }
+.canvas::-webkit-scrollbar-track { background: #100E0B; border-left: 1px solid #2A2620; }
+.canvas::-webkit-scrollbar-thumb { background: #3A3226; border: 3px solid #100E0B; }
+.canvas::-webkit-scrollbar-thumb:hover { background: var(--li); }
+.canvas::-webkit-scrollbar-corner { background: #100E0B; }
+
+/* Tooltip */
+.tip {
+  position: fixed; z-index: 300;
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.12s; max-width: 240px;
+}
+.tip.show { opacity: 1; }
+.tip-inner {
+  position: relative;
+  background: #14110D;
+  border: 1px solid #3A3226;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.7);
+  padding: 20px 16px 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  clip-path: polygon(
+    0% 9px, 5% 3px, 10% 10px, 15% 2px, 20% 8px, 25% 3px, 30% 11px, 35% 2px,
+    40% 8px, 45% 4px, 50% 10px, 55% 2px, 60% 9px, 65% 3px, 70% 11px, 75% 2px,
+    80% 8px, 85% 4px, 90% 10px, 95% 3px, 100% 9px,
+    100% 100%, 0% 100%
+  );
+}
+.tip-pin {
+  position: absolute; top: -3px; left: 50%; transform: translateX(-50%);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #E8C97A, #A9803F 55%, #6B4E23 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,.6);
+  z-index: 2;
+}
+.tip-tag {
+  position: absolute; top: 12px; right: -6px;
+  background: #1C1210;
+  border: 1px solid #5C2A1E;
+  color: #A6453A;
+  font-size: 6.5px; letter-spacing: .12em; text-transform: uppercase;
+  padding: 2px 5px;
+  transform: rotate(3deg);
+  z-index: 2;
+  white-space: nowrap;
+}
+.tip-name {
+  font-family: 'Cinzel', serif;
+  font-size: 12px; color: var(--bright);
+  line-height: 1.3; margin-bottom: 6px;
+}
+.tip-desc {
+  font-size: 10.5px; line-height: 1.7;
+  color: #B0A896; font-style: italic;
+}
+.tip-floor {
+  margin-top: 8px; font-size: 8px;
+  letter-spacing: 0.25em; color: var(--dim);
+  text-transform: uppercase;
+  border-top: 1px solid #2C2822; padding-top: 6px;
+}
+
+/* Cartouche / title block */
+.cartouche {
+  position: fixed; right: 20px; bottom: 20px; z-index: 150;
+  width: 214px;
+  background: #14110D;
+  border: 1px solid #3A3226;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.7);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.ct-head {
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid #3A3226;
+}
+.ct-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 11px; color: var(--bright);
+  letter-spacing: 0.1em;
+}
+.ct-sub {
+  font-size: 8.5px; color: var(--mid);
+  font-style: italic; margin-top: 3px;
+}
+.ct-grid {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  row-gap: 6px; column-gap: 8px;
+  padding: 9px 12px;
+}
+.ct-k {
+  font-size: 8px; letter-spacing: 0.14em;
+  color: var(--dim); text-transform: uppercase;
+  align-self: center;
+}
+.ct-v {
+  font-size: 9.5px; color: var(--li2);
+  text-align: right;
+}
+.ct-v.strike {
+  color: var(--dim);
+  text-decoration: line-through;
+  text-decoration-color: #5C2A1E;
+}
+.ct-stamp {
+  margin: 2px 10px 10px;
+  padding: 4px 6px;
+  border: 1px solid #5C2A1E;
+  color: #A6453A;
+  font-size: 7.5px; letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: rotate(-1.2deg);
+}
+
+/* Legend */
+.legend {
+  position: fixed; left: 20px; bottom: 20px; z-index: 150;
+  background: #14110D;
+  border: 1px solid #3A3226;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.7);
+  padding: 10px 12px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.lg-title {
+  font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 8px; padding-bottom: 6px;
+  border-bottom: 1px solid #2C2822;
+}
+.lg-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.lg-row:first-of-type { margin-top: 0; }
+.lg-icon { width: 14px; height: 14px; flex-shrink: 0; }
+.lg-row span { font-size: 9px; color: var(--mid); letter-spacing: 0.02em; white-space: nowrap; }
+
+/* Node interactions */
+.node { cursor: pointer; }
+.node .nr { transition: filter 0.15s, opacity 0.15s; }
+.node:hover .nr, .node.lit .nr { filter: brightness(1.6); }
+.node .nc { transition: opacity 0.15s; }
+.node:hover .nc, .node.lit .nc { opacity: 1 !important; }
+
+@keyframes enc-pulse { 0%,100%{opacity:.55;} 50%{opacity:1;} }
+.enc-pulse { animation: enc-pulse 2.5s ease-in-out infinite; }
+
+@keyframes patrol-loop { to { stroke-dashoffset: -480; } }
+.patrol-loop { animation: patrol-loop 14s linear infinite; }
+
+@keyframes pk { 0%,100%{opacity:.3;} 50%{opacity:.65;} }
+.pk { animation: pk 4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-title">THE <em>CATALYST</em></div>
+  <div class="h-div"></div>
+  <div class="h-stamp">Structural Survey · Dakare Bay</div>
+  <div class="h-div"></div>
+  <div class="h-stamp red">Corvanite Property</div>
+  <div class="h-right">
+    <div class="close-hint" id="close-hint">ESC or click to dismiss</div>
+  </div>
+</header>
+
+<div class="canvas" id="canvas">
+<svg id="svg" viewBox="-370 0 1600 1460" xmlns="http://www.w3.org/2000/svg"
+     style="width:1600px;display:block;flex-shrink:0;">
+<defs>
+  <radialGradient id="gIsland" cx="50%" cy="35%" r="55%">
+    <stop offset="0%" stop-color="#1C1712"/>
+    <stop offset="100%" stop-color="#0E0C09"/>
+  </radialGradient>
+  <radialGradient id="gPeak" cx="50%" cy="60%" r="50%">
+    <stop offset="0%" stop-color="#B8923E" stop-opacity=".7"/>
+    <stop offset="100%" stop-color="#B8923E" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gOcclusion" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#3D9A88" stop-opacity="0"/>
+    <stop offset="75%" stop-color="#3D9A88" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#3D9A88" stop-opacity=".18"/>
+  </radialGradient>
+  <linearGradient id="gFDiv" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%"   stop-color="#A9803F" stop-opacity="0"/>
+    <stop offset="30%"  stop-color="#A9803F" stop-opacity=".35"/>
+    <stop offset="70%"  stop-color="#A9803F" stop-opacity=".35"/>
+    <stop offset="100%" stop-color="#A9803F" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="fg">
+    <feGaussianBlur stdDeviation="3" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
+    <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0"/>
+  </filter>
+  <!-- Floor band fills: alternating slightly lighter/darker -->
+  <!-- odd floors: #141210, even floors: #100E0C -->
+</defs>
+
+<!-- ══════════════════════════════════════
+     THE OCCLUSION — cloaking field enveloping the island,
+     cresting at the Cloaking Engine's floor
+══════════════════════════════════════ -->
+<g opacity=".6">
+  <ellipse cx="430" cy="1345" rx="852" ry="480" fill="url(#gOcclusion)"/>
+  <ellipse cx="430" cy="1345" rx="850" ry="480" fill="none" stroke="#3D9A88" stroke-width="2.5" filter="url(#fg)" opacity=".35"/>
+  <ellipse cx="430" cy="1345" rx="850" ry="480" fill="none" stroke="#2A7060" stroke-width="1.2" stroke-dasharray="10,6" opacity=".6"/>
+  <text x="430" y="852" text-anchor="middle" font-family="Cinzel" font-size="9" fill="#4A8A7A" letter-spacing="4" opacity=".75">THE OCCLUSION</text>
+</g>
+
+<!-- ══════════════════════════════════════
+     ISLAND BASE — jagged rocky coastline; crest still tucks up behind the
+     tower bands
+══════════════════════════════════════ -->
+<path d="M 1308.5,1280.0 L 1310.6,1304.5 1215.9,1324.6 1193.6,1347.4 1162.7,1371.0 1095.8,1391.5 962.6,1398.7 938.2,1432.8 801.4,1437.1 673.9,1440.5 550.4,1441.7 430.0,1458.6 301.2,1453.0 201.0,1430.7 64.5,1434.6 -23.1,1416.2 -164.1,1412.5 -194.1,1384.5 -318.4,1372.9 -368.6,1350.5 -365.1,1325.1 -370.5,1302.2 -519.6,1280.0 -514.7,1253.8 -356.7,1235.4 -362.4,1210.1 -371.0,1180.6 -197.8,1174.9 -137.9,1153.4 -50.1,1135.7 53.1,1120.6 191.9,1123.3 312.2,1121.7 430.0,1095.1 554.0,1113.4 666.0,1124.7 798.7,1124.1 891.2,1141.4 970.3,1159.5 1127.7,1163.2 1150.5,1190.5 1208.9,1211.3 1210.5,1235.7 1367.9,1254.0 Z" fill="url(#gIsland)" stroke="#332C22" stroke-width="1.5"/>
+<path d="M 1238.2,1280.0 L 1211.6,1300.2 1215.2,1321.7 1131.0,1338.4 1029.8,1351.2 1013.6,1375.4 874.3,1380.0 763.2,1386.9 668.9,1400.2 549.1,1402.9 430.0,1413.1 301.1,1413.0 201.6,1394.9 62.6,1397.9 -43.0,1386.4 -89.7,1365.0 -188.5,1353.5 -247.8,1336.5 -325.6,1320.1 -394.8,1301.4 -307.9,1280.0 -305.0,1261.0 -271.8,1242.7 -266.5,1222.0 -168.1,1209.0 -91.8,1194.7 -56.9,1170.4 55.3,1159.8 191.7,1160.1 302.7,1148.6 430.0,1144.5 551.1,1155.1 672.2,1158.1 791.4,1164.1 895.2,1175.3 984.5,1189.4 1054.4,1205.8 1107.2,1223.6 1143.9,1242.1 1222.2,1259.5 Z" fill="none" stroke="#282217" stroke-width="1" opacity=".5"/>
+<path d="M 1035.3,1280.0 L 1042.4,1294.3 1013.6,1308.2 967.9,1321.2 931.5,1335.9 836.1,1344.3 749.4,1353.5 660.7,1364.2 545.6,1367.1 430.0,1361.5 319.5,1363.3 198.0,1364.6 102.7,1355.3 12.4,1346.1 -48.3,1333.3 -124.2,1322.5 -198.6,1310.4 -173.7,1294.1 -248.3,1280.0 -209.7,1265.0 -205.4,1249.3 -131.4,1237.0 -47.8,1226.7 34.4,1217.4 100.8,1204.3 216.8,1202.2 323.0,1199.4 430.0,1191.8 534.8,1201.1 646.9,1200.9 740.5,1208.6 862.7,1211.5 908.1,1226.7 981.7,1237.7 1025.5,1251.2 1038.7,1265.7 Z" fill="none" stroke="#201B12" stroke-width="1" opacity=".3"/>
+
+<text x="430" y="1402" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#4A4438" letter-spacing="4">DAKARE BAY  ·  CLOAKED ISLAND  ·  OFF THE COAST OF COMMALOIRE</text>
+
+<!-- CONTINUOUS PATROL — a looping route circling the tower; back half is drawn
+     under the tower bands so the loop passes visibly behind the structure -->
+<path class="patrol-loop" d="M 110,1228 A 320,80 0 0 1 430,1148 A 320,80 0 0 1 750,1228" fill="none" stroke="#B8503A" stroke-width="1.5" stroke-dasharray="14,10" opacity=".5"/>
+
+<!-- ══════════════════════════════════════
+     TOWER — trapezoid cross-section
+     Base  y=1228, L=155, R=705  (w=550)
+     Peak  y=135,  L=295, R=565  (w=270)
+     7 floors (F6 double-height, absorbing the old F7 slot)
+     Per-floor taper: (275-135)/8 = 17.5px each side
+
+     Floor bands (alternating fills for legibility):
+     F1: 1228→1091   F2: 1091→954   F3: 954→817
+     F4: 817→680     F5: 680→543    F6: 543→269 (extended)
+     F7: 269→135
+     Peak cap: 135→62 (triangle)
+
+     Left wall x at each y:
+       y=1228: x=155    y=1091: x=172.5  y=954: x=190
+       y=817:  x=207.5  y=680:  x=225    y=543: x=242.5
+       y=406:  x=260    y=269:  x=277.5  y=135: x=295
+     Right wall mirrors (860-x):
+       y=1228: x=705   y=1091: x=687.5  ...  y=135: x=565
+══════════════════════════════════════ -->
+
+<!-- F1 band (odd = slightly lighter) -->
+<polygon points="155,1228 705,1228 687.5,1091 172.5,1091" fill="#141210"/>
+<!-- F2 band -->
+<polygon points="172.5,1091 687.5,1091 670,954 190,954" fill="#100E0C"/>
+<!-- F3 band -->
+<polygon points="190,954 670,954 652.5,817 207.5,817" fill="#141210"/>
+<!-- F4 band -->
+<polygon points="207.5,817 652.5,817 635,680 225,680" fill="#100E0C"/>
+<!-- F5 band -->
+<polygon points="225,680 635,680 617.5,543 242.5,543" fill="#141210"/>
+<!-- F6 band (extended: absorbs the floor above) -->
+<polygon points="242.5,543 617.5,543 582.5,269 277.5,269" fill="#100E0C"/>
+<!-- F7 band -->
+<polygon points="277.5,269 582.5,269 565,135 295,135" fill="#141210"/>
+
+<!-- Tower outer stroke -->
+<polygon points="295,135 565,135 705,1228 155,1228" fill="none" stroke="#3A3226" stroke-width="2"/>
+
+<!-- CONTINUOUS PATROL — front half, drawn over the tower bands so it passes in front -->
+<path class="patrol-loop" d="M 110,1228 A 320,80 0 0 0 430,1308 A 320,80 0 0 0 750,1228" fill="none" stroke="#B8503A" stroke-width="1.5" stroke-dasharray="14,10" opacity=".5"/>
+<text x="430" y="1358" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#8A5A44" letter-spacing="2" opacity=".7">↻ CONTINUOUS PATROL</text>
+
+<!-- Floor dividers -->
+<line x1="172.5" y1="1091" x2="687.5" y2="1091" stroke="#3A3226" stroke-width="1.5"/>
+<line x1="172.5" y1="1091" x2="687.5" y2="1091" stroke="url(#gFDiv)" stroke-width="1.5"/>
+
+<line x1="190"   y1="954"  x2="670"   y2="954"  stroke="#3A3226" stroke-width="1.5"/>
+<line x1="190"   y1="954"  x2="670"   y2="954"  stroke="url(#gFDiv)" stroke-width="1.5"/>
+
+<line x1="207.5" y1="817"  x2="652.5" y2="817"  stroke="#3A3226" stroke-width="1.5"/>
+<line x1="207.5" y1="817"  x2="652.5" y2="817"  stroke="url(#gFDiv)" stroke-width="1.5"/>
+
+<line x1="225"   y1="680"  x2="635"   y2="680"  stroke="#3A3226" stroke-width="1.5"/>
+<line x1="225"   y1="680"  x2="635"   y2="680"  stroke="url(#gFDiv)" stroke-width="1.5"/>
+
+<line x1="242.5" y1="543"  x2="617.5" y2="543"  stroke="#3A3226" stroke-width="1.5"/>
+<line x1="242.5" y1="543"  x2="617.5" y2="543"  stroke="url(#gFDiv)" stroke-width="1.5"/>
+
+<line x1="277.5" y1="269"  x2="582.5" y2="269"  stroke="#3A3226" stroke-width="1.5"/>
+<line x1="277.5" y1="269"  x2="582.5" y2="269"  stroke="url(#gFDiv)" stroke-width="1.5"/>
+
+<line x1="295"   y1="135"  x2="565"   y2="135"  stroke="#3A3226" stroke-width="1.5"/>
+<line x1="295"   y1="135"  x2="565"   y2="135"  stroke="url(#gFDiv)" stroke-width="1.5"/>
+
+<!-- Peak cap -->
+<polygon points="430,62 295,135 565,135" fill="#120F0B" stroke="#3A3226" stroke-width="1.5"/>
+<ellipse class="pk" cx="430" cy="100" rx="48" ry="55" fill="url(#gPeak)" filter="url(#fg)"/>
+<polygon points="430,62 424,88 436,88" fill="#B8923E" opacity=".85"/>
+<line x1="430" y1="62" x2="430" y2="90" stroke="#D8B36A" stroke-width="1.2" opacity=".9"/>
+
+<!-- ── FLOOR NUMBER LABELS (left) ── -->
+<text x="138" y="1165" text-anchor="end" font-family="Cinzel" font-size="10" fill="#736C5E" letter-spacing="2">F1</text>
+<text x="122" y="1028" text-anchor="end" font-family="Cinzel" font-size="10" fill="#736C5E" letter-spacing="2">F2</text>
+<text x="108"  y="891"  text-anchor="end" font-family="Cinzel" font-size="10" fill="#736C5E" letter-spacing="2">F3</text>
+<text x="94"   y="754"  text-anchor="end" font-family="Cinzel" font-size="10" fill="#736C5E" letter-spacing="2">F4</text>
+<text x="80"   y="617"  text-anchor="end" font-family="Cinzel" font-size="10" fill="#736C5E" letter-spacing="2">F5</text>
+<text x="66"   y="406"  text-anchor="end" font-family="Cinzel" font-size="10" fill="#736C5E" letter-spacing="2">F6</text>
+<text x="38"   y="206"  text-anchor="end" font-family="Cinzel" font-size="10" fill="#736C5E" letter-spacing="2">F7</text>
+
+<!-- ── FLOOR NAME LABELS (right) ── -->
+<text x="716" y="1165" font-family="IBM Plex Mono" font-size="8.5" fill="#62594A" letter-spacing="2">VESTIBULE</text>
+<text x="700" y="1028" font-family="IBM Plex Mono" font-size="8.5" fill="#62594A" letter-spacing="2">BARRACKS</text>
+<text x="684" y="891"  font-family="IBM Plex Mono" font-size="8.5" fill="#62594A" letter-spacing="2">PRODUCTION</text>
+<text x="668" y="754"  font-family="IBM Plex Mono" font-size="8.5" fill="#62594A" letter-spacing="2">OPERATIONS</text>
+<text x="652" y="617"  font-family="IBM Plex Mono" font-size="8.5" fill="#62594A" letter-spacing="2">RELIQUARY OF THE CALAMITY</text>
+<text x="636" y="406"  font-family="IBM Plex Mono" font-size="8.5" fill="#62594A" letter-spacing="2">THRESHOLD</text>
+<text x="604" y="206"  font-family="IBM Plex Mono" font-size="8.5" fill="#62594A" letter-spacing="2">CONTROL</text>
+
+<!-- ══════════════════════════════════════
+     DRAFTING MARKS — datum line, registration
+     crosshairs, compass rose
+══════════════════════════════════════ -->
+<g opacity=".5">
+  <line x1="-354" y1="135" x2="-354" y2="1228" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-358" y1="135" x2="-350" y2="135" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-358" y1="269" x2="-350" y2="269" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-358" y1="543" x2="-350" y2="543" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-358" y1="680" x2="-350" y2="680" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-358" y1="817" x2="-350" y2="817" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-358" y1="954" x2="-350" y2="954" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-358" y1="1091" x2="-350" y2="1091" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-358" y1="1228" x2="-350" y2="1228" stroke="#5C564A" stroke-width="1"/>
+</g>
+
+<g opacity=".35">
+  <line x1="-344" y1="40" x2="-326" y2="40" stroke="#5C564A" stroke-width="1"/>
+  <line x1="-335" y1="31" x2="-335" y2="49" stroke="#5C564A" stroke-width="1"/>
+  <circle cx="-335" cy="40" r="6" fill="none" stroke="#5C564A" stroke-width="1"/>
+
+  <line x1="1186" y1="40" x2="1204" y2="40" stroke="#5C564A" stroke-width="1"/>
+  <line x1="1195" y1="31" x2="1195" y2="49" stroke="#5C564A" stroke-width="1"/>
+  <circle cx="1195" cy="40" r="6" fill="none" stroke="#5C564A" stroke-width="1"/>
+
+  <line x1="1186" y1="1420" x2="1204" y2="1420" stroke="#5C564A" stroke-width="1"/>
+  <line x1="1195" y1="1411" x2="1195" y2="1429" stroke="#5C564A" stroke-width="1"/>
+  <circle cx="1195" cy="1420" r="6" fill="none" stroke="#5C564A" stroke-width="1"/>
+</g>
+
+<g transform="translate(-295,1412)" opacity=".55">
+  <circle r="20" fill="none" stroke="#8C6A35" stroke-width="1"/>
+  <circle r="1.6" fill="#8C6A35"/>
+  <line x1="0" y1="-20" x2="0" y2="20" stroke="#8C6A35" stroke-width=".75"/>
+  <line x1="-20" y1="0" x2="20" y2="0" stroke="#8C6A35" stroke-width=".75"/>
+  <polygon points="0,-20 -4,-9 0,-13 4,-9" fill="#B8923E"/>
+  <text y="-25" text-anchor="middle" font-family="Cinzel" font-size="9" fill="#B8923E" letter-spacing="1">N</text>
+</g>
+
+<!-- ══════════════════════════════════════
+     FLOOR 1  — y 1228→1091   mid ≈ 1160
+     usable width ≈ 190–668
+══════════════════════════════════════ -->
+
+<!-- Reception Hall -->
+<g class="node" id="n-reception"
+   data-name="Reception Hall"
+   data-floor="Floor 1 — Vestibule"
+   data-desc="The first face of the Forum. Clerks, credentials, and catalogues of Vel's history.">
+  <polygon points="183,1112 410,1112 410,1207 171,1207" fill="#1C1916" stroke="#5C5648" stroke-width="1.5" class="nr"/>
+  <circle cx="294" cy="1140" r="6" fill="#857E70" opacity=".8" class="nc"/>
+  <text x="294" y="1167" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#A29A8C" letter-spacing="1">RECEPTION</text>
+  <text x="294" y="1184" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6E6858">HALL</text>
+</g>
+
+<!-- Initiate Dormitories -->
+<g class="node" id="n-dorm"
+   data-name="Initiate Dormitories"
+   data-floor="Floor 1 — Vestibule"
+   data-desc="Collective bunks and living quarters where Corvanites philosophise and imagine their perfect future.">
+  <polygon points="450,1112 677,1112 689,1207 450,1207" fill="#1C1916" stroke="#5C5648" stroke-width="1.5" class="nr"/>
+  <circle cx="566" cy="1140" r="6" fill="#857E70" opacity=".8" class="nc"/>
+  <text x="566" y="1167" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#A29A8C" letter-spacing="1">INITIATE</text>
+  <text x="566" y="1184" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6E6858">DORMITORIES</text>
+</g>
+
+<!-- Encounter diamond F1 -->
+<g class="node enc-pulse" id="n-overseer-1"
+   data-name="Kras Stellin"
+   data-floor="Floor 1 — Vestibule"
+   data-desc="The Scribe">
+  <polygon points="430,1091 415,1109 430,1127 445,1109" fill="#170B1E" stroke="#8B5CC7" stroke-width="1.8" class="nr"/>
+  <circle cx="430" cy="1109" r="5" fill="#8B5CC7" opacity=".9" class="nc"/>
+</g>
+
+<!-- F1 lift lock -->
+
+<!-- ══════════════════════════════════════
+     FLOOR 2  — y 1091→954   mid ≈ 1023
+══════════════════════════════════════ -->
+
+<g class="node" id="n-armoury"
+   data-name="Armoury"
+   data-floor="Floor 2 — Barracks"
+   data-desc="Storage of Lithean-charged weapons, suit components and equipment. Overseen by a weapons clerk and select staff.">
+  <polygon points="200,975 341,975 341,1070 188,1070" fill="#171410" stroke="#7A5C30" stroke-width="1.5" class="nr"/>
+  <circle cx="268" cy="1005" r="6" fill="#A9803F" opacity=".8" class="nc"/>
+  <text x="268" y="1037" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#C4A063" letter-spacing="1">ARMOURY</text>
+</g>
+
+<g class="node" id="n-theatre"
+   data-name="Briefing Theatre"
+   data-floor="Floor 2 — Barracks"
+   data-desc="A callosal amphitheatre for planning and organising large scale Forum activity.">
+  <rect x="363" y="975" width="135" height="95" rx="0" fill="#171410" stroke="#7A5C30" stroke-width="1.5" class="nr"/>
+  <circle cx="430.5" cy="1003" r="6" fill="#A9803F" opacity=".8" class="nc"/>
+  <text x="430.5" y="1030" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#C4A063" letter-spacing="1">BRIEFING</text>
+  <text x="430.5" y="1047" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#8C6A3D">THEATRE</text>
+</g>
+
+<g class="node" id="n-veteran"
+   data-name="Veteran Quarters"
+   data-floor="Floor 2 — Barracks"
+   data-desc="Personalised living spaces for higher ranked Corvanites such as Ramming, Stannik or Hemway. ">
+  <polygon points="520,975 660,975 672,1070 520,1070" fill="#1C1916" stroke="#5C5648" stroke-width="1.5" class="nr"/>
+  <circle cx="592" cy="1003" r="6" fill="#857E70" opacity=".8" class="nc"/>
+  <text x="592" y="1030" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#A29A8C" letter-spacing="1">VETERAN</text>
+  <text x="592" y="1047" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6E6858">QUARTERS</text>
+</g>
+
+<!-- Encounter diamond F2 -->
+<g class="node enc-pulse" id="n-sergeant"
+   data-name="Codron Vorhaus"
+   data-floor="Floor 2 — Barracks"
+   data-desc="The Face">
+  <polygon points="430,954 415,972 430,990 445,972" fill="#170B1E" stroke="#8B5CC7" stroke-width="1.8" class="nr"/>
+  <circle cx="430" cy="972" r="5" fill="#8B5CC7" opacity=".9" class="nc"/>
+</g>
+
+<!-- ══════════════════════════════════════
+     FLOOR 3  — y 954→817   mid ≈ 886   PRODUCTION
+══════════════════════════════════════ -->
+
+<g class="node" id="n-cloak"
+   data-name="Occlusion Engine"
+   data-floor="Floor 3 — Production"
+   data-desc="A pulsating engine room of unknown operation. Whatever it is doing, it is the reason this island is difficult to find.">
+  <polygon points="218,838 412,838 412,933 206,933" fill="#0E1E1A" stroke="#2A7060" stroke-width="1.5" class="nr"/>
+  <circle cx="312" cy="866" r="6" fill="#3D9A88" opacity=".8" class="nc"/>
+  <text x="312" y="893" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#4A8A7A" letter-spacing="1">OCCLUSION</text>
+  <text x="312" y="910" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#306A5A">ENGINE</text>
+</g>
+
+<g class="node" id="n-workshop"
+   data-name="Lithean Workshop"
+   data-floor="Floor 3 — Production"
+   data-desc="A macabre engineering centre where all of the Forums innovations are devised.">
+  <polygon points="448,838 642,838 654,933 448,933" fill="#1C1916" stroke="#5C5648" stroke-width="1.5" class="nr"/>
+  <circle cx="548" cy="866" r="6" fill="#857E70" opacity=".8" class="nc"/>
+  <text x="548" y="893" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#A29A8C" letter-spacing="1">LITHEAN</text>
+  <text x="548" y="910" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6E6858">WORKSHOP</text>
+</g>
+
+<!-- Encounter diamond F3 -->
+<g class="node enc-pulse" id="n-overseer-3"
+   data-name="Lycander"
+   data-floor="Floor 3 — Production"
+   data-desc="The Mechanism">
+  <polygon points="430,817 415,835 430,853 445,835" fill="#170B1E" stroke="#8B5CC7" stroke-width="1.8" class="nr"/>
+  <circle cx="430" cy="835" r="5" fill="#8B5CC7" opacity=".9" class="nc"/>
+</g>
+
+<!-- F3 lift lock -->
+
+<!-- ══════════════════════════════════════
+     FLOOR 4  — y 817→680   mid ≈ 749   OPERATIONS
+══════════════════════════════════════ -->
+
+<g class="node" id="n-comms"
+   data-name="Communications Web"
+   data-floor="Floor 4 — Operations"
+   data-desc="The digital web of the Corvanites, made tangible and live to keep track of Corvanites across Vel.">
+  <polygon points="235,701 414,701 414,796 223,796" fill="#171410" stroke="#7A5C30" stroke-width="1.5" class="nr"/>
+  <circle cx="322" cy="731" r="6" fill="#A9803F" opacity=".8" class="nc"/>
+  <text x="322" y="763" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#C4A063" letter-spacing="1">COMMS WEB</text>
+</g>
+
+<g class="node" id="n-docking"
+   data-name="Euclid Docking"
+   data-floor="Floor 4 — Operations"
+   data-desc="Railed docking bay for Euclid vessels, dozens of ships hanging like bats in slumber.">
+  <polygon points="446,701 625,701 637,796 446,796" fill="#171410" stroke="#7A5C30" stroke-width="1.5" class="nr"/>
+  <circle cx="538" cy="729" r="6" fill="#A9803F" opacity=".8" class="nc"/>
+  <text x="538" y="756" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#C4A063" letter-spacing="1">EUCLID</text>
+  <text x="538" y="773" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#8C6A3D">DOCKING</text>
+</g>
+
+<!-- Encounter diamond F4 -->
+<g class="node enc-pulse" id="n-overseer-4"
+   data-name="Madrinne Decoste"
+   data-floor="Floor 4 — Operations"
+   data-desc="">
+  <polygon points="430,680 415,698 430,716 445,698" fill="#170B1E" stroke="#8B5CC7" stroke-width="1.8" class="nr"/>
+  <circle cx="430" cy="698" r="5" fill="#8B5CC7" opacity=".9" class="nc"/>
+</g>
+
+<!-- F4 lift lock -->
+
+<!-- ══════════════════════════════════════
+     FLOOR 5  — y 680→543   mid ≈ 612   RELIQUARY OF THE CALAMITY
+══════════════════════════════════════ -->
+
+<g class="node" id="n-trace"
+   data-name="Hall of the Trace Evident"
+   data-floor="Floor 5 — Reliquary of the Calamity"
+   data-desc="History as Corvanites believes it happened. Meticulous and certain.">
+  <polygon points="246,556 614,556 628,668 232,668" fill="#171410" stroke="#7A5C30" stroke-width="2" class="nr"/>
+  <circle cx="430" cy="577" r="6" fill="#A9803F" opacity=".8" class="nc"/>
+  <text x="430" y="625" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#C4A063" letter-spacing="2">HALL OF THE</text>
+  <text x="430" y="643" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#8C6A3D" letter-spacing="1">TRACE EVIDENT</text>
+</g>
+
+<!-- The Keeper encounter -->
+<g class="node enc-pulse" id="n-keeper"
+   data-name="Canon"
+   data-floor="Floor 5 — Reliquary of the Calamity"
+   data-desc="The Voice">
+  <polygon points="430,543 415,561 430,579 445,561" fill="#170B1E" stroke="#8B5CC7" stroke-width="1.8" class="nr"/>
+  <circle cx="430" cy="561" r="5" fill="#8B5CC7" opacity=".9" class="nc"/>
+</g>
+
+<!-- F5 lift lock -->
+
+<!-- ══════════════════════════════════════
+     FLOOR 6  — y 543→269   mid ≈ 406   THRESHOLD (extended: absorbs the floor above)
+══════════════════════════════════════ -->
+
+<g class="node" id="n-strand"
+   data-name="Strand Divider"
+   data-floor="Floor 6 — THRESHOLD"
+   data-desc="A physical map of possibility and calculations still being written. Analysts work its cells 24/7.">
+  <polygon points="284,321 576,321 598,491 262,491" fill="#171410" stroke="#7A5C30" stroke-width="2" class="nr"/>
+  <circle cx="430" cy="376" r="7" fill="#A9803F" opacity=".8" class="nc"/>
+  <text x="430" y="417" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#C4A063" letter-spacing="2">STRAND</text>
+  <text x="430" y="436" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#8C6A3D" letter-spacing="1">DIVIDER</text>
+</g>
+
+<!-- Encounter diamond F6 -->
+<g class="node enc-pulse" id="n-overseer-6"
+   data-name="Efflux"
+   data-floor="Floor 6 — THRESHOLD"
+   data-desc="The Odds">
+  <polygon points="430,269 415,287 430,305 445,287" fill="#170B1E" stroke="#8B5CC7" stroke-width="1.8" class="nr"/>
+  <circle cx="430" cy="287" r="5" fill="#8B5CC7" opacity=".9" class="nc"/>
+</g>
+
+<!-- Keystone lift lock -->
+
+<!-- ══════════════════════════════════════
+     FLOOR 7  — y 269→135   mid ≈ 202
+══════════════════════════════════════ -->
+
+<g class="node enc-pulse" id="n-precipice"
+   data-name="Executors Precipice"
+   data-floor="Floor 7 — The CONTROL"
+   data-desc="The device that could rewrite the world, and the man that works it. Diodes are fed to it as The Executor quests through Vel's future's and failures for the right one.">
+  <polygon points="305,155 555,155 567,250 293,250" fill="#1A1410" stroke="#B8923E" stroke-width="2" class="nr" filter="url(#fg)"/>
+  <circle cx="430" cy="180" r="8" fill="#B8923E" opacity=".9" class="nc"/>
+  <text x="430" y="215" text-anchor="middle" font-family="Cinzel" font-size="13" fill="#D9B36A" letter-spacing="1.5">EXECUTORS</text>
+  <text x="430" y="232" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#B8935A" letter-spacing="1">PRECIPICE</text>
+</g>
+
+<!-- Document texture: paper grain, non-interactive -->
+<rect x="-370" y="0" width="1600" height="1460" filter="url(#grain)" opacity=".05" pointer-events="none"/>
+
+</svg>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="lg-title">Key</div>
+  <div class="lg-row"><svg class="lg-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="#14110D" stroke="#A9803F" stroke-width="1.5"/></svg><span>Exterior feature</span></div>
+  <div class="lg-row"><svg class="lg-icon" viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="8" fill="#171410" stroke="#7A5C30" stroke-width="1.5"/></svg><span>Interior room</span></div>
+  <div class="lg-row"><svg class="lg-icon" viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="8" fill="#0E1E1A" stroke="#2A7060" stroke-width="1.5"/></svg><span>Lithean apparatus</span></div>
+  <div class="lg-row"><svg class="lg-icon" viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="8" fill="#1C1210" stroke="#7A3A2E" stroke-width="1.2" stroke-dasharray="3,2"/></svg><span>Unconfirmed / restricted</span></div>
+  <div class="lg-row"><svg class="lg-icon" viewBox="0 0 16 16"><polygon points="8,2 3,8 8,14 13,8" fill="#170B1E" stroke="#8B5CC7" stroke-width="1.5"/></svg><span>Overseer</span></div>
+</div>
+
+<!-- Title block -->
+<div class="cartouche">
+  <div class="ct-head">
+    <div class="ct-title">THE CATALYST</div>
+    <div class="ct-sub">Sectional survey — elevation A</div>
+  </div>
+  <div class="ct-grid">
+    <span class="ct-k">Dwg No.</span><span class="ct-v">CTLYST&ndash;08&ndash;A</span>
+    <span class="ct-k">Scale</span><span class="ct-v">N.T.S.</span>
+    <span class="ct-k">Surveyed by</span><span class="ct-v strike">&mdash; redacted &mdash;</span>
+    <span class="ct-k">Date</span><span class="ct-v">[ illegible ]</span>
+  </div>
+  <div class="ct-stamp">Corvanite Internal · Do Not Distribute</div>
+</div>
+
+<!-- Tooltip -->
+<div class="tip" id="tip">
+  <div class="tip-inner">
+    <div class="tip-pin"></div>
+    <div class="tip-tag">Field Note</div>
+    <div class="tip-name" id="tip-name"></div>
+    <div class="tip-desc" id="tip-desc"></div>
+    <div class="tip-floor" id="tip-floor"></div>
+  </div>
+</div>
+
+<script>
+const tip       = document.getElementById('tip');
+const tipName   = document.getElementById('tip-name');
+const tipDesc   = document.getElementById('tip-desc');
+const tipFloor  = document.getElementById('tip-floor');
+const closeHint = document.getElementById('close-hint');
+let pinned = null;
+
+function showTip(node, e) {
+  tipName.textContent  = node.dataset.name;
+  tipDesc.textContent  = node.dataset.desc;
+  tipFloor.textContent = node.dataset.floor;
+  placeTip(e);
+  tip.classList.add('show');
+}
+function placeTip(e) {
+  const W = window.innerWidth, H = window.innerHeight;
+  const tw = 250, th = 120;
+  let x = e.clientX + 16, y = e.clientY + 16;
+  if (x + tw > W - 10) x = e.clientX - tw - 16;
+  if (y + th > H - 10) y = e.clientY - th - 16;
+  tip.style.left = x + 'px';
+  tip.style.top  = y + 'px';
+}
+
+document.querySelectorAll('.node').forEach(node => {
+  node.addEventListener('mouseenter', e => {
+    if (pinned) return;
+    node.classList.add('lit');
+    showTip(node, e);
+  });
+  node.addEventListener('mousemove', e => {
+    if (pinned) return;
+    placeTip(e);
+  });
+  node.addEventListener('mouseleave', () => {
+    if (pinned) return;
+    node.classList.remove('lit');
+    tip.classList.remove('show');
+  });
+  node.addEventListener('click', e => {
+    e.stopPropagation();
+    if (pinned === node) {
+      node.classList.remove('lit');
+      tip.classList.remove('show');
+      closeHint.classList.remove('visible');
+      pinned = null;
+      return;
+    }
+    if (pinned) pinned.classList.remove('lit');
+    pinned = node;
+    node.classList.add('lit');
+    showTip(node, e);
+    closeHint.classList.add('visible');
+  });
+});
+
+document.addEventListener('click', () => {
+  if (pinned) {
+    pinned.classList.remove('lit');
+    tip.classList.remove('show');
+    closeHint.classList.remove('visible');
+    pinned = null;
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && pinned) {
+    pinned.classList.remove('lit');
+    tip.classList.remove('show');
+    closeHint.classList.remove('visible');
+    pinned = null;
+  }
+});
+</script>
+</body>
+</html>

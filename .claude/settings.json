@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(npx --no-install playwright --version)",
+      "Bash(npm ls *)",
+      "Bash(npx --no-install playwright install chromium --with-deps)",
+      "Bash(node \"C:\\\\Users\\\\swals\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-swals-Dropbox-PC-Documents-Catalyst\\\\4d6a553d-bd1d-406c-96e1-121259453d78\\\\scratchpad\\\\check.mjs\")",
+      "Bash(npx playwright *)",
+      "Bash(curl -sf http://localhost:5173)",
+      "Bash(xargs -I{} echo {})",
+      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process -Filter \"CommandLine LIKE '\\\\''%vite%5183%'\\\\''\" | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }')",
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 5183 -ErrorAction SilentlyContinue; if \\($conn\\) { $conn | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; \"stopped\" } else { \"not found\" })"
+    ]
+  }
+}

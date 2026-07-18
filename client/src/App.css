@@ -1,0 +1,576 @@
+:root {
+  --bg: #0a0908;
+  --li: #a9803f;
+  --li2: #d8b36a;
+  --gold: #b8923e;
+  --bright: #ede8dc;
+  --mid: #9c9488;
+  --dim: #5c564a;
+  --border: #2c2822;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: #100e0b;
+  border-bottom: 1px solid #2a2620;
+  padding: 13px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.h-title {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--bright);
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+}
+.h-title em {
+  color: var(--li2);
+  font-style: normal;
+}
+.h-div {
+  width: 1px;
+  height: 18px;
+  background: #2c2822;
+  flex-shrink: 0;
+}
+.h-stamp {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  color: var(--mid);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.h-stamp.red {
+  color: #a6453a;
+  border: 1px solid #5c2a1e;
+  padding: 3px 9px;
+}
+.h-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.canvas {
+  position: fixed;
+  inset: 50px 0 0 0;
+  overflow: hidden;
+  background: var(--bg);
+  background-image: linear-gradient(rgba(169, 128, 63, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(169, 128, 63, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* react-zoom-pan-pinch injects its own stylesheet at runtime (after this one)
+   setting width/height: fit-content on the wrapper — !important is needed to
+   reliably win that cascade regardless of injection order. */
+.tf-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+}
+.tf-content {
+  display: inline-block;
+}
+
+.zoom-controls {
+  position: fixed;
+  right: 20px;
+  top: 56px;
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.zoom-controls button {
+  width: 32px;
+  height: 32px;
+  background: #14110d;
+  border: 1px solid #3a3226;
+  color: var(--bright);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+.zoom-controls button:hover {
+  border-color: var(--li);
+  color: var(--li2);
+}
+
+/* Search */
+.search {
+  position: relative;
+  width: 260px;
+}
+.search input {
+  width: 100%;
+  background: #14110d;
+  border: 1px solid #3a3226;
+  color: var(--bright);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  padding: 6px 10px;
+  letter-spacing: 0.04em;
+}
+.search input::placeholder {
+  color: var(--dim);
+}
+.search input:focus {
+  outline: none;
+  border-color: var(--li);
+}
+.search-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #14110d;
+  border: 1px solid #3a3226;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 250;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3226 #14110d;
+}
+.search-results::-webkit-scrollbar { width: 10px; }
+.search-results::-webkit-scrollbar-track { background: #14110d; }
+.search-results::-webkit-scrollbar-thumb { background: #3a3226; border: 2px solid #14110d; }
+.search-results::-webkit-scrollbar-thumb:hover { background: var(--li); }
+.search-result {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #2c2822;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-family: "IBM Plex Mono", monospace;
+}
+.search-result:last-child {
+  border-bottom: none;
+}
+.search-result:hover {
+  background: #1c1916;
+}
+.search-result-name {
+  font-size: 10.5px;
+  color: var(--bright);
+}
+.search-result-floor {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Tooltip */
+.tip {
+  position: fixed;
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.12s;
+  max-width: 250px;
+}
+.tip.show {
+  opacity: 1;
+}
+.tip-inner {
+  position: relative;
+  background: #14110d;
+  border: 1px solid #3a3226;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+  padding: 20px 16px 12px;
+  font-family: "IBM Plex Mono", monospace;
+  clip-path: polygon(
+    0% 9px, 5% 3px, 10% 10px, 15% 2px, 20% 8px, 25% 3px, 30% 11px, 35% 2px,
+    40% 8px, 45% 4px, 50% 10px, 55% 2px, 60% 9px, 65% 3px, 70% 11px, 75% 2px,
+    80% 8px, 85% 4px, 90% 10px, 95% 3px, 100% 9px,
+    100% 100%, 0% 100%
+  );
+}
+.tip-pin {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8c97a, #a9803f 55%, #6b4e23 100%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  z-index: 2;
+}
+.tip-tag {
+  position: absolute;
+  top: 12px;
+  right: -6px;
+  background: #1c1210;
+  border: 1px solid #5c2a1e;
+  color: #a6453a;
+  font-size: 6.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 5px;
+  transform: rotate(3deg);
+  z-index: 2;
+  white-space: nowrap;
+}
+.tip-name {
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  color: var(--bright);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.tip-desc {
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: #b0a896;
+  font-style: italic;
+}
+.tip-floor {
+  margin-top: 8px;
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  color: var(--dim);
+  text-transform: uppercase;
+  border-top: 1px solid #2c2822;
+  padding-top: 6px;
+}
+.tip-status {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #2c2822;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tip-status-label {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+.tip-status select {
+  flex: 1;
+  background: #1c1916;
+  border: 1px solid #3a3226;
+  color: var(--bright);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  padding: 3px 4px;
+}
+.tip-close {
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.tip-close:hover {
+  color: var(--li2);
+}
+
+/* Cartouche / title block */
+.cartouche {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 150;
+  width: 248px;
+  background: #14110d;
+  border: 1px solid #3a3226;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+  font-family: "IBM Plex Mono", monospace;
+}
+.ct-head {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid #3a3226;
+}
+.ct-title {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 14px;
+  color: var(--bright);
+  letter-spacing: 0.1em;
+}
+.ct-sub {
+  font-size: 10.5px;
+  color: var(--mid);
+  font-style: italic;
+  margin-top: 4px;
+}
+.ct-grid {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  row-gap: 8px;
+  column-gap: 8px;
+  padding: 11px 14px;
+}
+.ct-k {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  text-transform: uppercase;
+  align-self: center;
+}
+.ct-v {
+  font-size: 12px;
+  color: var(--li2);
+  text-align: right;
+}
+.ct-v.strike {
+  color: var(--dim);
+  text-decoration: line-through;
+  text-decoration-color: #5c2a1e;
+}
+.ct-stamp {
+  margin: 2px 12px 12px;
+  padding: 5px 6px;
+  border: 1px solid #5c2a1e;
+  color: #a6453a;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: rotate(-1.2deg);
+}
+
+/* Legend */
+.legend {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 150;
+  background: #14110d;
+  border: 1px solid #3a3226;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+  padding: 13px 15px;
+  font-family: "IBM Plex Mono", monospace;
+}
+.lg-title {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2c2822;
+}
+.lg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.lg-row:first-of-type {
+  margin-top: 0;
+}
+.lg-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+.lg-row span {
+  font-size: 11.5px;
+  color: var(--mid);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Node interactions */
+.node {
+  cursor: pointer;
+  --status-filter: none;
+}
+.node:focus-visible {
+  outline: 2px solid var(--li2);
+  outline-offset: 3px;
+}
+.node.status-visited {
+  --status-filter: saturate(0.75) brightness(0.95);
+}
+.node.status-cleared {
+  --status-filter: grayscale(0.55) brightness(0.88);
+}
+.node.status-looted {
+  --status-filter: grayscale(0.8) brightness(0.72);
+}
+.node .nr {
+  filter: var(--status-filter);
+  transition: filter 0.15s, opacity 0.15s;
+}
+.node:hover .nr,
+.node.lit .nr {
+  filter: brightness(1.6) var(--status-filter);
+}
+.node .nc {
+  filter: var(--status-filter);
+  transition: opacity 0.15s, filter 0.15s;
+}
+.node:hover .nc,
+.node.lit .nc {
+  opacity: 1 !important;
+  filter: var(--status-filter);
+}
+
+@keyframes enc-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.enc-pulse {
+  animation: enc-pulse 2.5s ease-in-out infinite;
+}
+
+/* Executors Precipice — final boss room */
+@keyframes boss-aura {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  60% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+.boss-aura {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  pointer-events: none;
+  animation: boss-aura 3.6s ease-out infinite;
+}
+.boss-aura-2 {
+  animation-delay: 1.8s;
+}
+
+@keyframes boss-core-glow {
+  0%,
+  100% {
+    filter: brightness(1) drop-shadow(0 0 2px #b8923e);
+  }
+  50% {
+    filter: brightness(1.5) drop-shadow(0 0 6px #e8c878);
+  }
+}
+.boss-core {
+  animation: boss-core-glow 2.8s ease-in-out infinite;
+}
+
+@keyframes patrol-loop {
+  to {
+    stroke-dashoffset: -480;
+  }
+}
+.patrol-loop {
+  animation: patrol-loop 14s linear infinite;
+}
+
+@keyframes pk {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+.pk {
+  animation: pk 4s ease-in-out infinite;
+}
+
+/* Load-in reveal: the survey resolving into focus, the core igniting once.
+   Durations are long and easing is gentle on purpose — an aggressive
+   ease-out (expo-style) front-loads nearly all the visible change into the
+   first ~150ms, which reads as "just appears" rather than a reveal. */
+.tower-reveal {
+  opacity: 1;
+  filter: blur(0);
+}
+.peak-surge-outer,
+.peak-surge-core {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+/* Not gated behind prefers-reduced-motion: this is a personal single-user
+   tool, and the motion here (a one-time fade/blur/glow on load) isn't the
+   sustained parallax/autoplay kind of thing that setting exists to guard
+   against. Play it every time regardless of the OS setting. */
+.tower-reveal {
+  animation: tower-reveal-in 1700ms ease-out both;
+}
+.peak-surge-outer {
+  animation: peak-surge-outer-in 2000ms cubic-bezier(0.22, 0.61, 0.36, 1) 500ms both;
+}
+.peak-surge-core {
+  animation: peak-surge-core-in 900ms cubic-bezier(0.22, 0.61, 0.36, 1) 500ms both;
+}
+@keyframes tower-reveal-in {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  70% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes peak-surge-outer-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+@keyframes peak-surge-core-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}

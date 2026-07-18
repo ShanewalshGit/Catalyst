@@ -48,10 +48,13 @@ export function TowerMap() {
         <ellipse cx="430" cy="1345" rx="852" ry="480" fill="url(#gOcclusion)" />
         <ellipse cx="430" cy="1345" rx="850" ry="480" fill="none" stroke="#3D9A88" strokeWidth="2.5" filter="url(#fg)" opacity=".35" />
         <ellipse cx="430" cy="1345" rx="850" ry="480" fill="none" stroke="#2A7060" strokeWidth="1.2" strokeDasharray="10,6" opacity=".6" />
-        <text x="430" y="852" textAnchor="middle" fontFamily="Cinzel" fontSize="9" fill="#4A8A7A" letterSpacing="4" opacity=".75">
-          THE OCCLUSION
-        </text>
       </g>
+      {/* Label sits left of the tower footprint (outside x 190–670) and below
+          the ellipse's dashed boundary there (arc stays above y~993 across
+          this label's width) so neither the tower nor the arc line cross it */}
+      <text x="-90" y="1030" textAnchor="middle" fontFamily="Cinzel" fontSize="11" fill="#5FA592" letterSpacing="3" opacity=".85">
+        THE OCCLUSION
+      </text>
 
       {/* ISLAND BASE — jagged rocky coastline; crest still tucks up behind the
           tower bands */}
@@ -76,7 +79,7 @@ export function TowerMap() {
         opacity=".3"
       />
 
-      <text x="430" y="1402" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="8" fill="#4A4438" letterSpacing="4">
+      <text x="430" y="1402" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#5C5446" letterSpacing="3.5">
         DAKARE BAY  ·  CLOAKED ISLAND  ·  OFF THE COAST OF COMMALOIRE
       </text>
 
@@ -113,7 +116,7 @@ export function TowerMap() {
         strokeDasharray="14,10"
         opacity=".5"
       />
-      <text x="430" y="1358" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="8" fill="#8A5A44" letterSpacing="2" opacity=".7">
+      <text x="430" y="1358" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9.5" fill="#9C6C54" letterSpacing="2" opacity=".8">
         ↻ CONTINUOUS PATROL
       </text>
 
@@ -150,7 +153,7 @@ export function TowerMap() {
         [66, 406, "F6"],
         [38, 206, "F7"],
       ].map(([x, y, label]) => (
-        <text key={label} x={x} y={y} textAnchor="end" fontFamily="Cinzel" fontSize="10" fill="#6E6E6E" letterSpacing="2">
+        <text key={label} x={x} y={y} textAnchor="end" fontFamily="Cinzel" fontSize="12" fill="#8C8C8C" letterSpacing="2">
           {label}
         </text>
       ))}
@@ -159,13 +162,13 @@ export function TowerMap() {
       {[
         [716, 1165, "VESTIBULE"],
         [700, 1028, "BARRACKS"],
-        [684, 891, "PRODUCTION"],
+        [684, 873, "PRODUCTION"],
         [668, 754, "OPERATIONS"],
         [652, 617, "RELIQUARY"],
         [636, 406, "THRESHOLD"],
         [604, 206, "CONTROL"],
       ].map(([x, y, label]) => (
-        <text key={label} x={x} y={y} fontFamily="IBM Plex Mono" fontSize="8.5" fill="#5A5A5A" letterSpacing="2">
+        <text key={label} x={x} y={y} fontFamily="IBM Plex Mono" fontSize="10" fill="#7E7E7E" letterSpacing="2">
           {label}
         </text>
       ))}
@@ -198,22 +201,22 @@ export function TowerMap() {
         <line x1="0" y1="-20" x2="0" y2="20" stroke="#8C6A35" strokeWidth=".75" />
         <line x1="-20" y1="0" x2="20" y2="0" stroke="#8C6A35" strokeWidth=".75" />
         <polygon points="0,-20 -4,-9 0,-13 4,-9" fill="#B8923E" />
-        <text y="-25" textAnchor="middle" fontFamily="Cinzel" fontSize="9" fill="#B8923E" letterSpacing="1">N</text>
+        <text y="-25" textAnchor="middle" fontFamily="Cinzel" fontSize="10.5" fill="#B8923E" letterSpacing="1">N</text>
       </g>
 
       {/* FLOOR 1 */}
       <InteractiveNode id="n-reception" badge={{ x: 394, y: 1128 }}>
         <polygon points="183,1112 410,1112 410,1207 171,1207" fill="#1C1916" stroke="#5C5648" strokeWidth="1.5" className="nr" />
         <circle cx="294" cy="1140" r="6" fill="#857E70" opacity=".8" className="nc" />
-        <text x="294" y="1167" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#A29A8C" letterSpacing="1">RECEPTION</text>
-        <text x="294" y="1184" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#6E6858">HALL</text>
+        <text x="294" y="1168" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#A29A8C" letterSpacing="1">RECEPTION</text>
+        <text x="294" y="1187" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10.5" fill="#84806E">HALL</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-dorm" badge={{ x: 661, y: 1128 }}>
         <polygon points="450,1112 677,1112 689,1207 450,1207" fill="#1C1916" stroke="#5C5648" strokeWidth="1.5" className="nr" />
         <circle cx="566" cy="1140" r="6" fill="#857E70" opacity=".8" className="nc" />
-        <text x="566" y="1167" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#A29A8C" letterSpacing="1">INITIATE</text>
-        <text x="566" y="1184" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#6E6858">DORMITORIES</text>
+        <text x="566" y="1168" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#A29A8C" letterSpacing="1">INITIATE</text>
+        <text x="566" y="1187" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10.5" fill="#84806E">DORMITORIES</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-overseer-1" badge={{ x: 447, y: 1095 }} pulse>
@@ -225,21 +228,21 @@ export function TowerMap() {
       <InteractiveNode id="n-armoury" badge={{ x: 325, y: 991 }}>
         <polygon points="200,975 341,975 341,1070 188,1070" fill="#171410" stroke="#7A5C30" strokeWidth="1.5" className="nr" />
         <circle cx="268" cy="1005" r="6" fill="#A9803F" opacity=".8" className="nc" />
-        <text x="268" y="1037" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#C4A063" letterSpacing="1">ARMOURY</text>
+        <text x="268" y="1038" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#C4A063" letterSpacing="1">ARMOURY</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-theatre" badge={{ x: 482, y: 991 }}>
         <rect x="363" y="975" width="135" height="95" rx="0" fill="#171410" stroke="#7A5C30" strokeWidth="1.5" className="nr" />
         <circle cx="430.5" cy="1003" r="6" fill="#A9803F" opacity=".8" className="nc" />
-        <text x="430.5" y="1030" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#C4A063" letterSpacing="1">BRIEFING</text>
-        <text x="430.5" y="1047" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#8C6A3D">THEATRE</text>
+        <text x="430.5" y="1031" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#C4A063" letterSpacing="1">BRIEFING</text>
+        <text x="430.5" y="1050" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10.5" fill="#A17E48">THEATRE</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-veteran" badge={{ x: 644, y: 991 }}>
         <polygon points="520,975 660,975 672,1070 520,1070" fill="#1C1916" stroke="#5C5648" strokeWidth="1.5" className="nr" />
         <circle cx="592" cy="1003" r="6" fill="#857E70" opacity=".8" className="nc" />
-        <text x="592" y="1030" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#A29A8C" letterSpacing="1">VETERAN</text>
-        <text x="592" y="1047" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#6E6858">QUARTERS</text>
+        <text x="592" y="1031" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#A29A8C" letterSpacing="1">VETERAN</text>
+        <text x="592" y="1050" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10.5" fill="#84806E">QUARTERS</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-sergeant" badge={{ x: 447, y: 958 }} pulse>
@@ -251,15 +254,15 @@ export function TowerMap() {
       <InteractiveNode id="n-cloak" badge={{ x: 396, y: 854 }}>
         <polygon points="218,838 412,838 412,933 206,933" fill="#0E1E1A" stroke="#2A7060" strokeWidth="1.5" className="nr" />
         <circle cx="312" cy="866" r="6" fill="#3D9A88" opacity=".8" className="nc" />
-        <text x="312" y="893" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#4A8A7A" letterSpacing="1">Occlusion</text>
-        <text x="312" y="910" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#306A5A">ENGINE</text>
+        <text x="312" y="894" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#5FA592" letterSpacing="1">Occlusion</text>
+        <text x="312" y="913" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10.5" fill="#3E8272">ENGINE</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-workshop" badge={{ x: 626, y: 854 }}>
         <polygon points="448,838 642,838 654,933 448,933" fill="#171410" stroke="#7A5C30" strokeWidth="1.5" className="nr" />
         <circle cx="548" cy="866" r="6" fill="#A9803F" opacity=".8" className="nc" />
-        <text x="548" y="893" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#C4A063" letterSpacing="1">LITHEAN</text>
-        <text x="548" y="910" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#8C6A3D">WORKSHOP</text>
+        <text x="548" y="894" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#C4A063" letterSpacing="1">LITHEAN</text>
+        <text x="548" y="913" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10.5" fill="#A17E48">WORKSHOP</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-overseer-3" badge={{ x: 447, y: 821 }} pulse>
@@ -271,14 +274,14 @@ export function TowerMap() {
       <InteractiveNode id="n-comms" badge={{ x: 398, y: 717 }}>
         <polygon points="235,701 414,701 414,796 223,796" fill="#1C1916" stroke="#5C5648" strokeWidth="1.5" className="nr" />
         <circle cx="322" cy="731" r="6" fill="#857E70" opacity=".8" className="nc" />
-        <text x="322" y="763" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#A29A8C" letterSpacing="1">COMMS WEB</text>
+        <text x="322" y="764" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#A29A8C" letterSpacing="1">COMMS WEB</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-docking" badge={{ x: 609, y: 717 }}>
         <polygon points="446,701 625,701 637,796 446,796" fill="#1C1916" stroke="#5C5648" strokeWidth="1.5" className="nr" />
         <circle cx="538" cy="729" r="6" fill="#857E70" opacity=".8" className="nc" />
-        <text x="538" y="756" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#A29A8C" letterSpacing="1">EUCLID</text>
-        <text x="538" y="773" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#6E6858">DOCKING</text>
+        <text x="538" y="757" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#A29A8C" letterSpacing="1">EUCLID</text>
+        <text x="538" y="776" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10.5" fill="#84806E">DOCKING</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-overseer-4" badge={{ x: 447, y: 684 }} pulse>
@@ -290,8 +293,8 @@ export function TowerMap() {
       <InteractiveNode id="n-trace" badge={{ x: 605, y: 566 }}>
         <polygon points="246,556 614,556 628,668 232,668" fill="#171410" stroke="#7A5C30" strokeWidth="2" className="nr" />
         <circle cx="430" cy="577" r="6" fill="#A9803F" opacity=".8" className="nc" />
-        <text x="430" y="625" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11" fill="#C4A063" letterSpacing="2">HALL OF THE</text>
-        <text x="430" y="643" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#8C6A3D" letterSpacing="1">TRACE EVIDENT</text>
+        <text x="430" y="627" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="12.5" fill="#C4A063" letterSpacing="2">HALL OF THE</text>
+        <text x="430" y="648" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#A17E48" letterSpacing="1">TRACE EVIDENT</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-keeper" badge={{ x: 447, y: 547 }} pulse>
@@ -303,8 +306,8 @@ export function TowerMap() {
       <InteractiveNode id="n-strand" badge={{ x: 562, y: 335 }}>
         <polygon points="284,321 576,321 598,491 262,491" fill="#0E1E1A" stroke="#2A7060" strokeWidth="2" className="nr" />
         <circle cx="430" cy="376" r="7" fill="#3D9A88" opacity=".8" className="nc" />
-        <text x="430" y="417" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11" fill="#4A8A7A" letterSpacing="2">STRAND</text>
-        <text x="430" y="436" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10" fill="#306A5A" letterSpacing="1">DIVIDER</text>
+        <text x="430" y="419" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="12.5" fill="#5FA592" letterSpacing="2">STRAND</text>
+        <text x="430" y="440" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="11.5" fill="#3E8272" letterSpacing="1">DIVIDER</text>
       </InteractiveNode>
 
       <InteractiveNode id="n-overseer-6" badge={{ x: 447, y: 273 }} pulse>
@@ -320,8 +323,8 @@ export function TowerMap() {
         <circle className="boss-aura boss-aura-2" cx="430" cy="202" r="46" fill="none" stroke="#E8C878" strokeWidth="1" />
         <polygon points="305,155 555,155 567,250 293,250" fill="#1A1410" stroke="#B8923E" strokeWidth="2.5" className="nr boss-frame" filter="url(#fg)" />
         <circle cx="430" cy="180" r="9" fill="#B8923E" opacity=".9" className="nc boss-core" />
-        <text x="430" y="215" textAnchor="middle" fontFamily="Cinzel" fontSize="14" fill="#E8C878" letterSpacing="2">EXECUTORS</text>
-        <text x="430" y="232" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9" fill="#B8935A" letterSpacing="1.5">PRECIPICE</text>
+        <text x="430" y="216" textAnchor="middle" fontFamily="Cinzel" fontSize="15.5" fill="#E8C878" letterSpacing="2">EXECUTORS</text>
+        <text x="430" y="234" textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="10.5" fill="#C7A268" letterSpacing="1.5">PRECIPICE</text>
       </InteractiveNode>
 
       {/* Document texture: paper grain, non-interactive */}

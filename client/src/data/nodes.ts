@@ -96,7 +96,7 @@ export const NODES: NodeMeta[] = [
     id: "n-docking",
     name: "Euclid Docking",
     floor: "Floor 4 — Operations",
-    desc: "Railed docking bay for Euclid vessels, dozens of ships hanging like bats in slumber.",
+    desc: "Railed docking bay for Euclid vessels, dozens of ships hang like bats in slumber.",
     category: "room",
   },
   {
@@ -110,7 +110,7 @@ export const NODES: NodeMeta[] = [
     id: "n-trace",
     name: "Hall of the Trace Evident",
     floor: "Floor 5 — Reliquary",
-    desc: "History as Corvanites believes it happened. Meticulous and certain.",
+    desc: "History as Corvanites believe it happened. Meticulous and certain.",
     category: "room",
   },
   {
@@ -138,7 +138,7 @@ export const NODES: NodeMeta[] = [
     id: "n-precipice",
     name: "Executors Precipice",
     floor: "Floor 7 — The CONTROL",
-    desc: "The device that could rewrite the world, and the man that works it. Diodes are fed to it as The Executor quests through Vel's future's and failures for the right one.",
+    desc: "The device that could rewrite the world, and the man that works it. Diodes are fed to it as The Executor quests through Vel's futures for the right one.",
     category: "villain",
   },
 ];

@@ -11,7 +11,22 @@
       "Bash(curl -sf http://localhost:5173)",
       "Bash(xargs -I{} echo {})",
       "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process -Filter \"CommandLine LIKE '\\\\''%vite%5183%'\\\\''\" | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }')",
-      "PowerShell($conn = Get-NetTCPConnection -LocalPort 5183 -ErrorAction SilentlyContinue; if \\($conn\\) { $conn | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; \"stopped\" } else { \"not found\" })"
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 5183 -ErrorAction SilentlyContinue; if \\($conn\\) { $conn | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; \"stopped\" } else { \"not found\" })",
+      "Bash('/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe' --headless --disable-gpu --force-device-scale-factor=2 --screenshot=/c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/catalyst-after-2x.png --window-size=1700,1500 file:///c:/Users/swals/Dropbox/PC/Documents/Catalyst/catalyst-map.html)",
+      "Bash('/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe' --headless --disable-gpu --screenshot=/c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/catalyst-after.png --window-size=1700,1500 file:///c:/Users/swals/Dropbox/PC/Documents/Catalyst/catalyst-map.html)",
+      "Read(//c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/**)",
+      "Bash(npm install *)",
+      "Bash(SCRATCH=\"/c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad\" *)",
+      "Read(//c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/node_modules/**)",
+      "Bash(node /c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/tooltip-shot.js)",
+      "Bash(mv /c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/tooltip-shot.js /c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/tooltip-shot.mjs)",
+      "Bash(node /c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/tooltip-shot.mjs)",
+      "Bash(nohup npm run dev -- --port 5183)",
+      "Bash(disown)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5183/)",
+      "Bash(node /c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/react-shot.mjs)",
+      "Bash('/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe' --headless --disable-gpu --force-device-scale-factor=2 --screenshot=/c/Users/swals/AppData/Local/Temp/claude/c--Users-swals-Dropbox-PC-Documents-Catalyst/b5c1970a-cea0-49d0-9b30-b35239bab69d/scratchpad/catalyst-fix2-2x.png --window-size=1700,1500 file:///c:/Users/swals/Dropbox/PC/Documents/Catalyst/catalyst-map.html)"
     ]
   }
 }

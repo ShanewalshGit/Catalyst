@@ -47,7 +47,7 @@ export const NODES: NodeMeta[] = [
     id: "n-theatre",
     name: "Briefing Theatre",
     floor: "Floor 2 — Barracks",
-    desc: "A callosal amphitheatre for planning and organising large scale Forum activity.",
+    desc: "A boardroom for planning and organising large scale Forum activity to the inner ranks.",
     category: "room",
   },
   {
